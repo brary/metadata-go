@@ -1,0 +1,51 @@
+version: '3'
+
+services:
+  pd0:
+    image: pingcap/pd:latest
+    ports:
+      - "2379:2379"
+    command:
+      - --name=pd0
+      - --client-urls=http://0.0.0.0:2379
+      - --peer-urls=http://0.0.0.0:2380
+      - --advertise-client-urls=http://pd0:2379
+      - --advertise-peer-urls=http://pd0:2380
+      - --initial-cluster=pd0=http://pd0:2380
+    networks:
+      - tikv
+
+  tikv0:
+    image: pingcap/tikv:latest
+    ports:
+      - "20160:20160"
+    command:
+      - --addr=0.0.0.0:20160
+      - --advertise-addr=tikv0:20160
+      - --data-dir=/data
+      - --pd=pd0:2379
+    volumes:
+      - tikv0:/data
+    depends_on:
+      - pd0
+    networks:
+      - tikv
+
+  test:
+    build:
+      context: .
+      dockerfile: Dockerfile.test
+    environment:
+      - TIKV_PD_ADDR=pd0:2379
+    depends_on:
+      - pd0
+      - tikv0
+    networks:
+      - tikv
+
+networks:
+  tikv:
+    driver: bridge
+
+volumes:
+  tikv0: 

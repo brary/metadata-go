@@ -4,7 +4,6 @@ import (
 	"context"
 	"fmt"
 
-	"github.com/tikv/client-go/v2/config"
 	"github.com/tikv/client-go/v2/txnkv"
 )
 
@@ -16,8 +15,7 @@ type TiKVClient struct {
 
 // NewTiKVClient creates a new TiKV client
 func NewTiKVClient(ctx context.Context, pdAddrs []string) (*TiKVClient, error) {
-	conf := config.Default()
-	client, err := txnkv.NewClient(pdAddrs, conf)
+	client, err := txnkv.NewClient(pdAddrs)
 	if err != nil {
 		return nil, fmt.Errorf("failed to create TiKV client: %v", err)
 	}

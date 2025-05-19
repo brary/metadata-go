@@ -6,11 +6,12 @@ import (
 	"sync"
 
 	"github.com/tikv/client-go/v2/txnkv"
+	"github.com/tikv/client-go/v2/kv"
 )
 
 // Transaction represents a database transaction
 type Transaction struct {
-	txn    *txnkv.Transaction
+	txn    kv.Transaction
 	ctx    context.Context
 	mu     sync.Mutex
 	active bool
